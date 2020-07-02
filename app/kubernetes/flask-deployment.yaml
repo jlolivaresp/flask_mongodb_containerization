@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: flask
+  name: flask
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: flask
+  template:
+    metadata:
+      labels:
+        service: flask
+    spec:
+      containers:
+      - image: python:latest
+        imagePullPolicy: Never
+        name: flask
+        ports:
+        - containerPort: 5000
+        env:
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: user
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: password
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
